@@ -1,4 +1,5 @@
 import pygame, sys, constants, platform
+from cactus import Cactus
 from coin import Coin
 from cube import Cube
 from mario import Mario
@@ -32,19 +33,20 @@ sprites = [
 #create lists for all sprites and coins
 active_sprite_list = pygame.sprite.Group()
 # initialize player
-player = Mario(0,50)
+player = Mario(0,500)
 cube1 = Cube(200, 300)
 cube2 = Cube(450, 270)
 coin1 = Coin(200, 300)
 coin2 = Coin(450, 270)
-player.rect.x = 0
-player.rect.y = 600
+# player.rect.x = 0
+# player.rect.y = 600
 active_sprite_list.add(player, cube1, cube2)
 # Collision temp variable
 collideCube1 = False
 collideCube2 = False
 
 level1coin_list = pygame.sprite.Group()
+level1cactus_list = pygame.sprite.Group()
 
 #Draw text function           
 def drawText(text, font, surface, x, y):
@@ -57,24 +59,24 @@ def drawText(text, font, surface, x, y):
 def create_level1():
     block_list = pygame.sprite.Group()
     #list of platform
-    blocks = [[100,20,200,465,constants.WHITE],
-              [100,20,400,410,constants.WHITE],
-              [100,20,600,350,constants.WHITE],
-              [100,20,700,290,constants.WHITE]
+    blocks = [[200,465],
+              [350,410],
+              [500,350],
+              [700,290]
             ]
      
     # Loop through the list. Create the platform, add it to the list
     for item in blocks:
-        block=platform.Platform(item[0],item[1],item[2],item[3], item[4])
- 
+        block=platform.Platform(item[0],item[1])
         block_list.add(block)
 
     
     #list of coins
-    coins = [ [200,410],
-              [400,355],
-              [600,295],
-              [700,235] ]
+    coins = [ [80,470],
+              [200,410],
+              [380,355],
+              [520,295],
+              [720,235] ]
     
     # Loop through the list. Create coins, add it to the list
     for item in coins:
@@ -98,45 +100,41 @@ def create_level1():
     level1coin_list.add(cube1)
     
     
-    #list of plants
-    # plants = [ [0,460],
-    #         ]
+    # list of cactus
+    cactus = [ [620,485], [420,485], [40,485],[40,485] ]
      
     # Loop through the list. Create plants, add it to the list
-    # for item in plants:
-    #     plant=Plant(item[0],item[1])
- 
-    #     level1plant_list.add(plant)
-        
-
+    for item in cactus:
+        cactus1= Cactus(item[0],item[1])
+        level1cactus_list.add(cactus1)
+     
     return block_list
 
 def start_screen():
     screen.blit(pygame.image.load('img/bck.png'), (0, 0))
     pygame.display.flip()
-    continues = True
-    while continues:
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
-                continues = False
+                main()
             if event.type == pygame.QUIT:
                 terminate()
-    main()
+    
 
 def main():
-    while True:
-
+    # while True:
         coin_list = level1coin_list
+        cactus_list = level1cactus_list
         block_list = create_level1()
         score = 0
         lives = 3
+        level = 1
         
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
-
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
@@ -150,8 +148,7 @@ def main():
                         player.jump(block_list)
                         player.image = sprites[3]
                     if event.key == pygame.K_DOWN:
-                        player.changespeed_y(6)
-                            
+                        player.changespeed_y(6)            
                 if event.type == pygame.KEYUP: 
                     if event.key == pygame.K_LEFT: 
                         player.changespeed_x(-0)
@@ -159,39 +156,64 @@ def main():
                         player.changespeed_x(0)
 
             # Stop player around the screen if they go too far left/right
-            if player.rect.x >= constants.SCREEN_WIDTH - 70:
-                player.rect.x = constants.SCREEN_WIDTH - 70
+            if player.rect.x >= constants.SCREEN_WIDTH - 60:
+                player.rect.x = constants.SCREEN_WIDTH - 60
         
             if player.rect.x <= 0:
                 player.rect.x = 0
-            
-            coins_hit_list = pygame.sprite.spritecollide(player, coin_list, True)  
-            
-            # Check the list of coin collisions and change score
+
+
+            coins_hit_list = pygame.sprite.spritecollide(player, coin_list, True) 
+
             for coin in coins_hit_list:
+                # if pygame.sprite.spritecollide(coin, coins_hit_list, True):
+                pygame.mixer.music.play()   
                 score +=1
+            
+            #Plant collision
+            cactus_hit_list = pygame.sprite.spritecollide(player, cactus_list, True)  
+            # Check the list of plant collisions and lose lives
+            for cactus in cactus_hit_list:
+                lives -=1
+            # Check the list of coin collisions and change score
             if lives < 0:
                 break
-            player.calc_grav()   
+            player.update(block_list)
+            #Calculate gravity
+            player.calc_grav() 
+              
 
-            
-            screen.fill((255,255,255))       
-            active_sprite_list.update(block_list)
+                 
+            # Set the screen background
             screen.blit(BACKGROUND, (0,0))
-            active_sprite_list.draw(screen)
-            
+            pygame.draw.rect(screen, constants.SKY, [730, 200, 50, 100],4)
+            active_sprite_list.draw(screen)           
             block_list.draw(screen)
             coin_list.draw(screen)
-            pygame.display.update()
+            cactus_list.draw(screen)
+            
+            drawText("Level: " + str(level), font, screen, 60, 30)
             drawText("Score: " + str(score), font, screen, 720, 30)
             drawText("Lives: " + str(lives), font, screen, 720, 60)
-            # update the screen with what we've drawn. 
-            pygame.display.flip()
+                   
             # refresh rate   
             fpsClock.tick(FPS)
+            
+            # update the screen with what we've drawn. 
+            pygame.display.flip()
+            
+
+        #stop the game and show game over screen
+        screen.fill(constants.BLACK)
+        
+        drawText("GAME OVER", font, screen, (constants.SCREEN_WIDTH / 2), 300)
+        drawText('Press a key to play again.', font, screen, (constants.SCREEN_WIDTH / 2), 350)
+        pygame.mixer.music.stop() 
+        pygame.display.update()
+           
+            
 
 def terminate(): 
-    pygame.mixer.quit()
     pygame.quit()
     sys.exit()
 
