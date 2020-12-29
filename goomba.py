@@ -1,4 +1,4 @@
-import sprite
+# import sprite
 import pygame
 
 class Goomba(pygame.sprite.Sprite):

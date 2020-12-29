@@ -1,4 +1,3 @@
-import sprite
 import pygame
 
 class Cube(pygame.sprite.Sprite):

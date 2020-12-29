@@ -1,4 +1,3 @@
-import sprite
 import pygame
 
 class Cactus(pygame.sprite.Sprite):
