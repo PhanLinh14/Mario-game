@@ -19,7 +19,7 @@ BACKGROUND= pygame.image.load('img/background.png')
 
 icon= pygame.image.load('img/icon.png')
 pygame.display.set_icon(icon)
-pygame.display.set_caption('Super Mario Brother')
+pygame.display.set_caption('Simple Mario Game')
 
 sprites = [
             #stay
