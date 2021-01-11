@@ -4,7 +4,7 @@ class Mario(pygame.sprite.Sprite):
     change_x=0
     change_y=0
  
-    # Triggered if the player wants to jump.
+    # Kích hoạt nếu người chơi muốn nháy (khi nhảy jump_ready=True)
     jump_ready = False
  
     # Count of frames since the player hit 'jump' and we
@@ -16,38 +16,38 @@ class Mario(pygame.sprite.Sprite):
     # -- Methods 
     # Constructor function 
     def __init__(self,x,y): 
-        # Call the parent's constructor 
+        # Gọi hàm dựng của cha
         pygame.sprite.Sprite.__init__(self) 
            
-        # Set height, width 
+        # cài đặt hình ảnh của mario
         self.image = pygame.image.load("img/mario.png")
         
-        # Make top-left corner the passed-in location. 
+        # điểm trên cùng bên trái được đặt là điểm bắt đâu
         self.rect = self.image.get_rect() 
         self.rect.x = x
         self.rect.y = y
        
-    # Change the speed of the player 
+    # Thay đổi tốc độ( thay đổi tọa độ) của người chơi 
     def changespeed_x(self,x):
         self.change_x = x
  
     def changespeed_y(self,y):
         self.change_y = y
            
-    # Find a new position for the player 
+    # Vị trí mới
     def update(self,blocks): 
  
-        # Save the old x position, update, and see if player collided.
+        # Gán vị trí cũ =old, sau đó vị trí mới = cũ + độ thay đổi tọa độ
         old_x = self.rect.x
         new_x = old_x + self.change_x
         self.rect.x = new_x
  
         collide = pygame.sprite.spritecollide (self, blocks, False)
         if collide:
-            # Player collided, go back to the old pre-collision location
+            # khi người chơi va chạm với vật thể (vật thể ko gây sát thương) thì quay lại vị trí hiện tại
             self.rect.x = old_x
  
-        # Save the old y position, update, and see if we collided.
+        # Gán vị trí cũ =old, sau đó vị trí mới = cũ + độ thay đổi tọa độ
         old_y = self.rect.y 
         new_y = old_y + self.change_y 
         self.rect.y = new_y
@@ -55,7 +55,7 @@ class Mario(pygame.sprite.Sprite):
         block_hit_list = pygame.sprite.spritecollide(self, blocks, False) 
  
         for block in block_hit_list:
-            # Player collided. Set the old pre-collision location.
+            #khi người chơi va chạm với vật thể ( vật thể  gây sát thương ấy) thì quay về vị trí hiện tại
             self.rect.y = old_y
             self.rect.x = old_x
  
@@ -65,9 +65,7 @@ class Mario(pygame.sprite.Sprite):
             # Start counting frames since player hit something
             self.frame_since_collision = 0
  
-        # If the player recently asked to jump, and have recently
-        # had ground under his feet, go ahead and change the velocity
-        # to send player upwards
+        # 
         if self.frame_since_collision < 6 and self.frame_since_jump < 6:
             self.frame_since_jump = 100
             self.change_y -= 9
@@ -86,7 +84,7 @@ class Mario(pygame.sprite.Sprite):
             self.rect.y = 500
             self.frame_since_collision = 0
  
-    # Called when user hits 'jump' button
+    # Hàm nhảy
     def jump(self,blocks):
         self.jump_ready = True
         self.frame_since_jump = 0
