@@ -221,10 +221,18 @@ def main():
             # Check the list of plant collisions and lose lives
             for cactus in cactus_hit_list:
                 lives -=1
+            colliding1 = pygame.sprite.collide_rect(player,goomba)
+            if colliding1==True:
+
+                lives-=1
+                goomba.update()
+
             
-            # if pygame.sprite.collide_rect(player, goomba):
-            #     lives -=1
-            # Check the list of coin collisions and change score
+            colliding2=pygame.sprite.collide_rect(player,goomba2)
+            if colliding2==True:
+                lives-=1
+                goomba2.update()
+            
             goomba.move()
             goomba2.move()
                 
