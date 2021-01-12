@@ -38,15 +38,22 @@ player = Mario(0,500)
 
 goomba = Goomba(400)
 goomba2 = Goomba(420)
-# coin1 = Coin(200, 300)
-# coin2 = Coin(450, 270)
-active_sprite_list.add(player, goomba, goomba2)
 
+active_sprite_list.add(player, goomba, goomba2)
+level1cube_list = pygame.sprite.Group()
 level1coin_list = pygame.sprite.Group()
 level1cactus_list = pygame.sprite.Group()
 level1goomba = pygame.sprite.Group()
 level2coin_list = pygame.sprite.Group()
 level2cactus_list = pygame.sprite.Group()
+
+
+cube1 = Cube(200, 300)
+cube2= Cube(470, 200)
+    # for item in cubes:
+    #     cube=Cube(item[0],item[1])
+coin1 = Coin(200, 300)
+coin2 = Coin(470, 200)
 
 #Draw text function           
 def drawText(text, font, surface, x, y):
@@ -73,10 +80,7 @@ def create_level1():
     for item in blocks:
         block=platform.Platform(item[0],item[1])
         block_list.add(block)
-    cubes =[[200, 300],[470, 200]]
-    for item in cubes:
-        cube=Cube(item[0],item[1])
-        block_list.add(cube)
+    
     
     #list of coins
     coins = [ [75,390],[90,390],[240, 400], [380,340], [520,290],[680,235] ]
@@ -85,7 +89,8 @@ def create_level1():
     for item in coins:
         coin= Coin(item[0],item[1])
         level1coin_list.add(coin)
-    
+    level1coin_list.add(coin1)
+    level1coin_list.add(coin2)
     # list of cactus
     cactus = [ [620,485], [650,485],[430,485], [310,485] ]
      
@@ -93,6 +98,8 @@ def create_level1():
     for item in cactus:
         cactus1= Cactus(item[0],item[1])
         level1cactus_list.add(cactus1)
+    level1cube_list.add(cube1)
+    level1cube_list.add(cube2)
     
     return block_list
 
@@ -177,19 +184,19 @@ def main():
         pygame.mixer.Sound('sounds/mario_theme.ogg').play(-1)
         gameover= False
         gameloop= True
+        collideCube = False
         while gameloop:
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    gameloop= False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                     if event.key == pygame.K_LEFT:
-                        player.changespeed_x(-6)
+                        player.go_left()
                         player.image = sprites[2]
                     if event.key == pygame.K_RIGHT:
-                        player.changespeed_x(6)
+                        player.go_right()
                         player.image = sprites[1]
                     if event.key == pygame.K_SPACE:
                         player.jump(block_list)
@@ -198,9 +205,9 @@ def main():
                         player.changespeed_y(6)            
                 if event.type == pygame.KEYUP: 
                     if event.key == pygame.K_LEFT: 
-                        player.changespeed_x(-0)
+                        player.stop()
                     if event.key == pygame.K_RIGHT: 
-                        player.changespeed_x(0)
+                        player.stop()
 
             # Stop player around the screen if they go too far left/right
             if player.rect.x >= constants.SCREEN_WIDTH - 60:
@@ -209,13 +216,16 @@ def main():
             if player.rect.x <= 0:
                 player.rect.x = 0
 
+            if pygame.sprite.spritecollide(player, level1cube_list, True):
+                    for i in coin_list:
+                        i.reveal = True
             coins_hit_list = pygame.sprite.spritecollide(player, coin_list, True) 
 
             for coin in coins_hit_list:
-                # if pygame.sprite.spritecollide(coin, coins_hit_list, True):
                 pygame.mixer.music.play()   
                 score +=1
-            
+                
+                
             #Plant collision
             cactus_hit_list = pygame.sprite.spritecollide(player, cactus_list, True)  
             # Check the list of plant collisions and lose lives
@@ -242,13 +252,16 @@ def main():
                     break
             #Calculate gravity
             player.calc_grav() 
-                             
+            level1cube_list.update()
+            coin_list.update()              
             # Set the screen background
             screen.blit(BACKGROUND, (0,0))
             screen.blit(pygame.image.load('img/door.png'), (740,205))
-            active_sprite_list.draw(screen)           
+            active_sprite_list.draw(screen)      
+                 
             block_list.draw(screen)
             coin_list.draw(screen)
+            level1cube_list.draw(screen)
             
             cactus_list.draw(screen)
             
@@ -269,8 +282,8 @@ def main():
                 game_over()
                 
         pygame.mixer.music.stop()   
+        terminate()   
            
-            
 
 def game_over():
     

@@ -1,4 +1,4 @@
-import pygame
+import pygame, constants
 
 class Mario(pygame.sprite.Sprite):
     change_x=0
@@ -25,8 +25,14 @@ class Mario(pygame.sprite.Sprite):
         self.rect.y = y
        
     # Thay đổi tốc độ( thay đổi tọa độ) của người chơi 
-    def changespeed_x(self,x):
-        self.change_x = x
+    def go_left(self):
+        self.change_x = -6
+ 
+    def go_right(self):
+        self.change_x = 6
+
+    def stop(self):
+        self.change_x = 0
  
     def changespeed_y(self,y):
         self.change_y = y
@@ -79,9 +85,10 @@ class Mario(pygame.sprite.Sprite):
             self.frame_since_collision = 0
  
     # Hàm nhảy
-    def jump(self,blocks):
+    def jump(self, blocks):
         self.jump_ready = True
-        self.frame_since_jump = 0
+        self.frame_since_jump=0
+        
 
 
 
