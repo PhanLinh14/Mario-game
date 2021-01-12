@@ -6,10 +6,7 @@ class Mario(pygame.sprite.Sprite):
  
     # Kích hoạt nếu người chơi muốn nháy (khi nhảy jump_ready=True)
     jump_ready = False
- 
-    # Count of frames since the player hit 'jump' and we
-    # collided against something. Used to prevent jumping
-    # when we haven't hit anything.
+
     frame_since_collision = 0
     frame_since_jump = 0
      
@@ -39,8 +36,7 @@ class Mario(pygame.sprite.Sprite):
  
         # Gán vị trí cũ =old, sau đó vị trí mới = cũ + độ thay đổi tọa độ
         old_x = self.rect.x
-        new_x = old_x + self.change_x
-        self.rect.x = new_x
+        self.rect.x = old_x + self.change_x
  
         collide = pygame.sprite.spritecollide (self, blocks, False)
         if collide:
@@ -49,8 +45,7 @@ class Mario(pygame.sprite.Sprite):
  
         # Gán vị trí cũ =old, sau đó vị trí mới = cũ + độ thay đổi tọa độ
         old_y = self.rect.y 
-        new_y = old_y + self.change_y 
-        self.rect.y = new_y
+        self.rect.y = old_y + self.change_y 
          
         block_hit_list = pygame.sprite.spritecollide(self, blocks, False) 
  
@@ -64,8 +59,7 @@ class Mario(pygame.sprite.Sprite):
  
             # Start counting frames since player hit something
             self.frame_since_collision = 0
- 
-        # 
+        
         if self.frame_since_collision < 6 and self.frame_since_jump < 6:
             self.frame_since_jump = 100
             self.change_y -= 9
@@ -88,8 +82,7 @@ class Mario(pygame.sprite.Sprite):
     def jump(self,blocks):
         self.jump_ready = True
         self.frame_since_jump = 0
-         
-pygame.init() 
+
 
 
 

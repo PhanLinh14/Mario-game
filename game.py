@@ -3,19 +3,19 @@ from cactus import Cactus
 from coin import Coin
 from cube import Cube
 from mario import Mario
+from goomba import Goomba
 from pygame.locals import *
 
 pygame.init()
-# The font we use to draw text on the screen (size 36)
+# Co chu 36
 font = pygame.font.Font(None, 36)
-
 FPS = 60
 # Used to manage how fast the screen updates
 fpsClock = pygame.time.Clock()
 
 #set up screen
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
-BACKGROUND= pygame.image.load('img/background.png')
+BACKGROUND= pygame.transform.scale(pygame.image.load('img/background.png'), (1000, constants.SCREEN_HEIGHT))
 
 icon= pygame.image.load('img/icon.png')
 pygame.display.set_icon(icon)
@@ -36,12 +36,15 @@ active_sprite_list = pygame.sprite.Group()
 # initialize player
 player = Mario(0,500)
 
-coin1 = Coin(200, 300)
-coin2 = Coin(450, 270)
-active_sprite_list.add(player)
+goomba = Goomba(400)
+goomba2 = Goomba(420)
+# coin1 = Coin(200, 300)
+# coin2 = Coin(450, 270)
+active_sprite_list.add(player, goomba, goomba2)
 
 level1coin_list = pygame.sprite.Group()
 level1cactus_list = pygame.sprite.Group()
+level1goomba = pygame.sprite.Group()
 level2coin_list = pygame.sprite.Group()
 level2cactus_list = pygame.sprite.Group()
 
@@ -90,7 +93,7 @@ def create_level1():
     for item in cactus:
         cactus1= Cactus(item[0],item[1])
         level1cactus_list.add(cactus1)
-     
+    
     return block_list
 
 # Create platforms
@@ -162,8 +165,9 @@ def start_screen():
         pygame.display.flip()
     main()
 
+
 def main():
-    # while True:
+    # while True:      
         coin_list = level1coin_list
         cactus_list = level1cactus_list
         block_list = create_level1()
@@ -217,10 +221,12 @@ def main():
             # Check the list of plant collisions and lose lives
             for cactus in cactus_hit_list:
                 lives -=1
+            
+            # if pygame.sprite.collide_rect(player, goomba):
+            #     lives -=1
             # Check the list of coin collisions and change score
-            if lives <= 0:
-                gameover= True
-                gameloop= False
+            goomba.move()
+            goomba2.move()
                 
             player.update(block_list)
             if 740 > player.rect.x > 730 and 290 > player.rect.y > 205:
@@ -243,40 +249,51 @@ def main():
             active_sprite_list.draw(screen)           
             block_list.draw(screen)
             coin_list.draw(screen)
+            
             cactus_list.draw(screen)
             
             drawText("Level: " + str(level), font, screen, 60, 30)
             drawText("Score: " + str(score), font, screen, 720, 30)
             drawText("Lives: " + str(lives), font, screen, 720, 60)
-                   
             # refresh rate   
             fpsClock.tick(FPS)
-            
-            # update the screen with what we've drawn. 
+            # camera()
+            # # update the screen with what we've drawn. 
             pygame.display.flip()
-            
-        pygame.mixer.music.stop()
-        if gameover:
-            game_over()   
+            # pygame.display.update()
+        
+        
+            if lives <= 0:
+                gameover= True
+                gameloop= False
+                game_over()
+                
+        pygame.mixer.music.stop()   
            
             
 
-
 def game_over():
     
-    pygame.mixer.stop()
-    continues= True
-    while continues:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                continues= False
+    # pygame.mixer.stop()
+    # continues= True
+    # while continues:
+        pygame.time.delay(30)
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             continues= False
+    #             terminate()
+    #         if event.type == pygame.MOUSEBUTTONDOWN:
+    #             continues= True
+
+                
                 
      #stop the game and show game over screen
         screen.fill(constants.BLACK)      
         drawText("GAME OVER", font, screen, (constants.SCREEN_WIDTH / 2), 300)
         drawText('Press a key to play again.', font, screen, (constants.SCREEN_WIDTH / 2), 350)
-        pygame.display.flip()
-    main()
+        pygame.display.update()
+    
+
+
 start_screen()
+

@@ -3,73 +3,28 @@ import pygame
 
 class Goomba(pygame.sprite.Sprite):
     
-    def __init__(self):
-
-        # load coin sprite images
-        super().__init__()
-
-        # frame array
-        self.frames = []
-
+    def __init__(self,x):
+        pygame.sprite.Sprite.__init__(self)
         # death bool
         self.dead = False
-
-        # added: load sprite sheet
-        self.sprite = pygame.image.load("img/goomba.png").convert()
-
-        # addes: frame var for animation and timer
-        self.curFrame = 0
-        self.timer = 1
-
-        # added: load images from sheet
-
-        # add to frames
-        frameCount = 0
-        while frameCount < 3:
-            image = sprite.get_image(self, frameCount*16, 0, 16, 16, constants.GREEN)
-            self.frames.append(image)
-            frameCount += 1
-
-        # added: set starting sprite
-        self.image = self.frames[0]
-
-        # added: var for moving speed
-        self.change_x = -2
-
-        # Set a referance to the image rect.
+        self.image= pygame.image.load('img/goomba.png')
         self.rect = self.image.get_rect()
-
-
-    # update coin 
-    def update(self):
-        self.move()
-        self.animate()
-
-        if self.dead == True:
-            self.die()
+        self.rect.x = x
+        self.rect.y = 540
+        self.change_x= 3
+    
 
     def move(self):
         self.rect.x += self.change_x
+        if self.rect.x <= 0:
+            self.change_x=3
+        elif self.rect.x >= 780:
+            self.change_x=-3
+            
 
-    def animate(self):
-        # control animation speed with timer
-        self.timer += 1
-
-        if self.timer % 5 == 0:
-            self.curFrame += 1
-
-            # see if frame limit reached for either direction
-            if self.curFrame == len(self.frames) - 1:
-                self.curFrame = 0
-
-            # edit image to be current frame
-            self.image = self.frames[self.curFrame]
-
-    def die(self):
-        self.image = self.frames[2]
-        self.change_x *= 0
-
-        self.timer += 1
-
-        if self.timer % 15 == 0:
-            self.kill()
+    # def die(self):
+    #     # self.image = self.frames[1]
+    #     # block_hit_list = pygame.sprite.spritecollide(self, blocks, False) 
+ 
+    #     # for block in block_hit_list:
+    #     self.kill()
