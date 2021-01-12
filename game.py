@@ -220,7 +220,8 @@ def main():
             cactus_hit_list = pygame.sprite.spritecollide(player, cactus_list, True)  
             # Check the list of plant collisions and lose lives
             for cactus in cactus_hit_list:
-                lives -=1
+                lives -=1 
+            # goomba collider
             colliding1 = pygame.sprite.collide_rect(player,goomba)
             if colliding1==True:
 
