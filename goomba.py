@@ -10,7 +10,7 @@ class Goomba(pygame.sprite.Sprite):
         self.image= pygame.image.load('img/goomba.png')
         self.rect = self.image.get_rect()
         self.rect.x = x
-        self.rect.y = 540
+        self.rect.y = 530
         self.change_x= 3
     
 
@@ -20,8 +20,6 @@ class Goomba(pygame.sprite.Sprite):
             self.change_x=3
         elif self.rect.x >= 780:
             self.change_x=-3
-            
-
     
     
     def update(self):
