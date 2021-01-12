@@ -224,7 +224,7 @@ def main():
 
             for coin in coins_hit_list:
                 pygame.mixer.music.play()   
-                score +=1
+                score +=50
                    
             #Plant collision
             cactus_hit_list = pygame.sprite.spritecollide(player, cactus_list, True)  
