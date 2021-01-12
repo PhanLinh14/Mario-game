@@ -295,24 +295,28 @@ def main():
 
 def game_over():
     
-    # pygame.mixer.stop()
-    # continues= True
-    # while continues:
-        pygame.time.delay(30)
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             continues= False
-    #             terminate()
-    #         if event.type == pygame.MOUSEBUTTONDOWN:
-    #             continues= True
+    pygame.time.delay(30)
+    
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYUP:
+                    if event.key == K_SPACE:
+                        return
+
 
                 
                 
      #stop the game and show game over screen
-        screen.fill(constants.BLACK)      
-        drawText("GAME OVER", font, screen, (constants.SCREEN_WIDTH / 2), 300)
-        drawText('Press a key to play again.', font, screen, (constants.SCREEN_WIDTH / 2), 350)
-        pygame.display.update()
+            screen.fill(constants.BLACK)
+            sc=a
+            drawText("GAME OVER", font, screen, (constants.SCREEN_WIDTH / 2), 300)
+            drawText("Your score " + str(sc), font,screen,(constants.SCREEN_WIDTH /2),350)
+
+            drawText('Press a Space to play again.', font, screen, (constants.SCREEN_WIDTH / 2), 450)
+            pygame.display.update()
     
 
 
