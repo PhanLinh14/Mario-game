@@ -17,7 +17,7 @@ fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
 BACKGROUND= pygame.transform.scale(pygame.image.load('img/background.png'), (1000, constants.SCREEN_HEIGHT))
 
-icon= pygame.image.load('img/icon.png')
+icon= pygame.image.load('img/title.jpg')
 pygame.display.set_icon(icon)
 pygame.display.set_caption('Simple Mario Game')
 
