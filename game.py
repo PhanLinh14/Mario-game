@@ -21,9 +21,7 @@ icon= pygame.image.load('img/icon.png')
 pygame.display.set_icon(icon)
 pygame.display.set_caption('Simple Mario Game')
 
-sprites = [
-            #stay
-            pygame.image.load('img/mario.png'),
+sprites = [ pygame.image.load('img/mario.png'),
             #1, run1
             pygame.image.load('img/run1.png'),
             #2, run left
@@ -37,13 +35,15 @@ active_sprite_list = pygame.sprite.Group()
 player = Mario(0,500)
 
 goomba = Goomba(400)
-goomba2 = Goomba(420)
+goomba2 = Goomba(440)
 
 active_sprite_list.add(player, goomba, goomba2)
 level1cube_list = pygame.sprite.Group()
 level1coin_list = pygame.sprite.Group()
 level1cactus_list = pygame.sprite.Group()
 level1goomba = pygame.sprite.Group()
+
+level2cube_list = pygame.sprite.Group()
 level2coin_list = pygame.sprite.Group()
 level2cactus_list = pygame.sprite.Group()
 
@@ -121,10 +121,10 @@ def create_level2():
     cubes =[[200, 140],[420, 50]]
     for item in cubes:
         cube=Cube(item[0],item[1])
-        block_list.add(cube)
+        level2cube_list.add(cube)
     
     #list of coins
-    coins = [ [215, 420],[95,240],[110,240],[255,220],[350,100],[530,280],[680,220] ]
+    coins = [[420, 50],[215, 420],[95,240],[110,240],[255,220],[350,100],[530,280],[680,220] ]
     
     # Loop through the list. Create coins, add it to the list
     for item in coins:
@@ -177,6 +177,7 @@ def main():
     # while True:      
         coin_list = level1coin_list
         cactus_list = level1cactus_list
+        cube_list= level1cube_list
         block_list = create_level1()
         score = 0
         lives = 3
@@ -204,7 +205,7 @@ def main():
                     if event.key == pygame.K_DOWN:
                         player.changespeed_y(6)            
                 if event.type == pygame.KEYUP: 
-                    if event.key == pygame.K_LEFT: 
+                    if event.key == pygame.K_LEFT or player.rect.x < 0: 
                         player.stop()
                     if event.key == pygame.K_RIGHT: 
                         player.stop()
@@ -212,29 +213,33 @@ def main():
             # Stop player around the screen if they go too far left/right
             if player.rect.x >= constants.SCREEN_WIDTH - 60:
                 player.rect.x = constants.SCREEN_WIDTH - 60
-        
-            if player.rect.x <= 0:
-                player.rect.x = 0
 
-            if pygame.sprite.spritecollide(player, level1cube_list, True):
-                    for i in coin_list:
-                        i.reveal = True
+            for i in cube_list:
+                if pygame.sprite.collide_rect(player, i):
+                    cube_list.remove(i)
+
             coins_hit_list = pygame.sprite.spritecollide(player, coin_list, True) 
 
             for coin in coins_hit_list:
                 pygame.mixer.music.play()   
                 score +=1
-                
-                
+                   
             #Plant collision
             cactus_hit_list = pygame.sprite.spritecollide(player, cactus_list, True)  
             # Check the list of plant collisions and lose lives
             for cactus in cactus_hit_list:
-                lives -=1
+                lives -=1 
+            # goomba collider
+            colliding1 = pygame.sprite.collide_rect(player,goomba)
+            if colliding1==True:
+                lives-=1
+                goomba.update()
             
-            # if pygame.sprite.collide_rect(player, goomba):
-            #     lives -=1
-            # Check the list of coin collisions and change score
+            colliding2=pygame.sprite.collide_rect(player,goomba2)
+            if colliding2==True:
+                lives-=1
+                goomba2.update()
+            
             goomba.move()
             goomba2.move()
                 
@@ -244,6 +249,7 @@ def main():
                     block_list = create_level2()
                     coin_list = level2coin_list
                     cactus_list = level2cactus_list
+                    cube_list = level2cube_list
                     level = 2
                     player.rect.x = 0
                     player.rect.y = 500
@@ -252,8 +258,8 @@ def main():
                     break
             #Calculate gravity
             player.calc_grav() 
-            level1cube_list.update()
-            coin_list.update()              
+            # level1cube_list.update()
+            # coin_list.update()              
             # Set the screen background
             screen.blit(BACKGROUND, (0,0))
             screen.blit(pygame.image.load('img/door.png'), (740,205))
@@ -261,7 +267,7 @@ def main():
                  
             block_list.draw(screen)
             coin_list.draw(screen)
-            level1cube_list.draw(screen)
+            cube_list.draw(screen)
             
             cactus_list.draw(screen)
             
