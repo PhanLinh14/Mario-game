@@ -21,7 +21,9 @@ icon= pygame.image.load('img/icon.png')
 pygame.display.set_icon(icon)
 pygame.display.set_caption('Simple Mario Game')
 
-sprites = [ pygame.image.load('img/mario.png'),
+sprites = [
+            #stay
+            pygame.image.load('img/mario.png'),
             #1, run1
             pygame.image.load('img/run1.png'),
             #2, run left
@@ -75,8 +77,6 @@ def create_level1():
               [350,410],
               [500,350],
               [720,290]]
-     
-    # Loop through the list. Create the platform, add it to the list
     for item in blocks:
         block=platform.Platform(item[0],item[1])
         block_list.add(block)
@@ -205,14 +205,16 @@ def main():
                     if event.key == pygame.K_DOWN:
                         player.changespeed_y(6)            
                 if event.type == pygame.KEYUP: 
-                    if event.key == pygame.K_LEFT or player.rect.x < 0: 
+                    if event.key == pygame.K_LEFT: 
                         player.stop()
                     if event.key == pygame.K_RIGHT: 
                         player.stop()
-
+            
             # Stop player around the screen if they go too far left/right
             if player.rect.x >= constants.SCREEN_WIDTH - 60:
                 player.rect.x = constants.SCREEN_WIDTH - 60
+            if player.rect.x <0:
+                player.rect.x=0
 
             for i in cube_list:
                 if pygame.sprite.collide_rect(player, i):
@@ -267,7 +269,7 @@ def main():
                  
             block_list.draw(screen)
             coin_list.draw(screen)
-            cube_list.draw(screen)
+            level1cube_list.draw(screen)
             
             cactus_list.draw(screen)
             
