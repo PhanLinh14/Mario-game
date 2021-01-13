@@ -7,7 +7,7 @@ from goomba import Goomba
 from pygame.locals import *
 
 pygame.init()
-# Co chu 36
+
 font = pygame.font.Font(None, 36)
 FPS = 60
 # Used to manage how fast the screen updates
@@ -21,8 +21,7 @@ icon= pygame.image.load('img/title.jpg')
 pygame.display.set_icon(icon)
 pygame.display.set_caption('Simple Mario Game')
 
-sprites = [
-            #stay
+sprites = [ #stay
             pygame.image.load('img/mario.png'),
             #1, run1
             pygame.image.load('img/run1.png'),
@@ -33,9 +32,8 @@ sprites = [
 
 #create lists for all sprites and coins
 active_sprite_list = pygame.sprite.Group()
-# initialize player
-player = Mario(0,500)
 
+player = Mario(0,500)
 goomba = Goomba(400)
 goomba2 = Goomba(440)
 
@@ -49,13 +47,6 @@ level2cube_list = pygame.sprite.Group()
 level2coin_list = pygame.sprite.Group()
 level2cactus_list = pygame.sprite.Group()
 
-
-cube1 = Cube(200, 300)
-cube2= Cube(470, 200)
-    # for item in cubes:
-    #     cube=Cube(item[0],item[1])
-coin1 = Coin(200, 300)
-coin2 = Coin(470, 200)
 
 #Draw text function           
 def drawText(text, font, surface, x, y):
@@ -81,16 +72,14 @@ def create_level1():
         block=platform.Platform(item[0],item[1])
         block_list.add(block)
     
-    
     #list of coins
-    coins = [ [75,390],[90,390],[240, 400], [380,340], [520,290],[680,235] ]
+    coins = [ [200, 300], [470, 200], [75,390],[90,390],[240, 400], [380,340], [520,290],[680,235] ]
     
     # Loop through the list. Create coins, add it to the list
     for item in coins:
         coin= Coin(item[0],item[1])
         level1coin_list.add(coin)
-    level1coin_list.add(coin1)
-    level1coin_list.add(coin2)
+
     # list of cactus
     cactus = [ [620,485], [650,485],[430,485], [310,485] ]
      
@@ -98,6 +87,9 @@ def create_level1():
     for item in cactus:
         cactus1= Cactus(item[0],item[1])
         level1cactus_list.add(cactus1)
+
+    cube1 = Cube(200, 300)
+    cube2= Cube(470, 200)
     level1cube_list.add(cube1)
     level1cube_list.add(cube2)
     
@@ -118,10 +110,7 @@ def create_level2():
     for item in blocks:
         block=platform.Platform(item[0],item[1])
         block_list.add(block)
-    cubes =[[200, 140],[420, 50]]
-    for item in cubes:
-        cube=Cube(item[0],item[1])
-        level2cube_list.add(cube)
+    
     
     #list of coins
     coins = [[420, 50],[215, 420],[95,240],[110,240],[255,220],[350,100],[530,280],[680,220] ]
@@ -138,7 +127,12 @@ def create_level2():
     for item in cactus2:
         cactus= Cactus(item[0],item[1])
         level2cactus_list.add(cactus)
-     
+
+    cube3= Cube(200, 140)
+    cube4= Cube(420, 50)
+    level2cube_list.add(cube3)
+    level2cube_list.add(cube4)
+
     return block_list
 
 def start_screen():  
@@ -172,6 +166,20 @@ def start_screen():
         pygame.display.flip()
     main()
 
+def pause():
+    paused= True
+    while paused:
+        for event in pygame.event.get():
+            if event.type== pygame.QUIT:
+                terminate()
+            if event.type== pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    paused = False
+        screen.fill(constants.BLACK)
+        drawText("PAUSED", font,screen,(constants.SCREEN_WIDTH /2),280)
+        drawText('Press P to continue.', font, screen, (constants.SCREEN_WIDTH / 2), 350)
+        pygame.display.update()
+        fpsClock.tick(10)
 
 def main():
     # while True:      
@@ -185,7 +193,6 @@ def main():
         pygame.mixer.Sound('sounds/mario_theme.ogg').play(-1)
         gameover= False
         gameloop= True
-        collideCube = False
         while gameloop:
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -203,7 +210,9 @@ def main():
                         player.jump(block_list)
                         player.image = sprites[3]
                     if event.key == pygame.K_DOWN:
-                        player.changespeed_y(6)            
+                        player.changespeed_y(6)
+                    if event.key == pygame.K_p:
+                        pause()           
                 if event.type == pygame.KEYUP: 
                     if event.key == pygame.K_LEFT: 
                         player.stop()
@@ -224,7 +233,7 @@ def main():
 
             for coin in coins_hit_list:
                 pygame.mixer.music.play()   
-                score +=50
+                score +=10
                    
             #Plant collision
             cactus_hit_list = pygame.sprite.spritecollide(player, cactus_list, True)  
@@ -258,18 +267,15 @@ def main():
             
                 elif level == 2:
                     break
-            #Calculate gravity
+
             player.calc_grav() 
-            # level1cube_list.update()
-            # coin_list.update()              
-            # Set the screen background
             screen.blit(BACKGROUND, (0,0))
             screen.blit(pygame.image.load('img/door.png'), (740,205))
             active_sprite_list.draw(screen)      
                  
             block_list.draw(screen)
             coin_list.draw(screen)
-            level1cube_list.draw(screen)
+            cube_list.draw(screen)
             
             cactus_list.draw(screen)
             
@@ -283,10 +289,10 @@ def main():
             pygame.display.flip()
             # pygame.display.update()
         
-        
             if lives <= 0:
                 gameover= True
                 gameloop= False
+            if gameover:
                 game_over(score)
                 
         pygame.mixer.music.stop()   
@@ -294,31 +300,21 @@ def main():
            
 
 def game_over(a):
+    pygame.time.delay(30)
+    screen.fill(constants.BLACK)
+    drawText("GAME OVER", font, screen, (constants.SCREEN_WIDTH / 2), 300)
+    drawText("Your score " + str(a), font,screen,(constants.SCREEN_WIDTH /2),350)
+    drawText('Press a Space to play again.', font, screen, (constants.SCREEN_WIDTH / 2), 450)
+    pygame.display.update()
+    gameover= True
+    while gameover:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYUP:
+                if event.key == K_SPACE:
+                    gameover= False
     
-        pygame.time.delay(30)
-    
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYUP:
-                    if event.key == K_SPACE:
-                        return
-
-
-                
-                
-     #stop the game and show game over screen
-            screen.fill(constants.BLACK)
-            sc=a
-            drawText("GAME OVER", font, screen, (constants.SCREEN_WIDTH / 2), 300)
-            drawText("Your score " + str(sc), font,screen,(constants.SCREEN_WIDTH /2),350)
-
-            drawText('Press a Space to play again.', font, screen, (constants.SCREEN_WIDTH / 2), 450)
-            pygame.display.update()
-    
-
-
 start_screen()
 
