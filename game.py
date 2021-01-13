@@ -7,8 +7,6 @@ from goomba import Goomba
 from pygame.locals import *
 
 pygame.init()
-
-font = pygame.font.Font(None, 36)
 FPS = 60
 # Used to manage how fast the screen updates
 fpsClock = pygame.time.Clock()
@@ -36,6 +34,8 @@ active_sprite_list = pygame.sprite.Group()
 player = Mario(0,500)
 goomba = Goomba(400)
 goomba2 = Goomba(440)
+brick1= platform.Platform(460,350)
+brick2= platform.Platform(490,350)
 
 active_sprite_list.add(player, goomba, goomba2)
 level1cube_list = pygame.sprite.Group()
@@ -47,9 +47,9 @@ level2cube_list = pygame.sprite.Group()
 level2coin_list = pygame.sprite.Group()
 level2cactus_list = pygame.sprite.Group()
 
-
-#Draw text function           
-def drawText(text, font, surface, x, y):
+         
+def drawText(text, size, surface, x, y):
+    font = pygame.font.Font(None, size)
     textobj = font.render(text, 1, constants.WHITE)
     textrect = textobj.get_rect()
     textrect.center = (x, y)
@@ -64,14 +64,13 @@ def terminate():
 def create_level1():
     block_list = pygame.sprite.Group()
     #list of platform
-    blocks = [[200,465],
-              [350,410],
-              [500,350],
+    blocks = [[170,465],
+              [330,410],
               [720,290]]
     for item in blocks:
         block=platform.Platform(item[0],item[1])
         block_list.add(block)
-    
+    block_list.add(brick1)
     #list of coins
     coins = [ [200, 300], [470, 200], [75,390],[90,390],[240, 400], [380,340], [520,290],[680,235] ]
     
@@ -99,18 +98,17 @@ def create_level1():
 def create_level2():
     block_list = pygame.sprite.Group()
     #list of platform
-    blocks = [[40,370],
+    blocks = [[30,370],
               [200,465],
               [230,290],
               [370,200],
-              [500,350],
               [720,290]]
      
     # Loop through the list. Create the platform, add it to the list
     for item in blocks:
         block=platform.Platform(item[0],item[1])
         block_list.add(block)
-    
+    block_list.add(brick2)
     
     #list of coins
     coins = [[420, 50],[215, 420],[95,240],[110,240],[255,220],[350,100],[530,280],[680,220] ]
@@ -176,8 +174,8 @@ def pause():
                 if event.key == pygame.K_p:
                     paused = False
         screen.fill(constants.BLACK)
-        drawText("PAUSED", font,screen,(constants.SCREEN_WIDTH /2),280)
-        drawText('Press P to continue.', font, screen, (constants.SCREEN_WIDTH / 2), 350)
+        drawText("PAUSED", 40, screen, (constants.SCREEN_WIDTH /2),280)
+        drawText('Press P to continue.', 36, screen, (constants.SCREEN_WIDTH / 2), 350)
         pygame.display.update()
         fpsClock.tick(10)
 
@@ -253,7 +251,9 @@ def main():
             
             goomba.move()
             goomba2.move()
-                
+            brick1.move_x(590)
+            brick2.move_x(580)
+            
             player.update(block_list)
             if 740 > player.rect.x > 730 and 290 > player.rect.y > 205:
                 if level == 1:
@@ -275,13 +275,12 @@ def main():
                  
             block_list.draw(screen)
             coin_list.draw(screen)
-            cube_list.draw(screen)
-            
+            cube_list.draw(screen)        
             cactus_list.draw(screen)
             
-            drawText("Level: " + str(level), font, screen, 60, 30)
-            drawText("Score: " + str(score), font, screen, 720, 30)
-            drawText("Lives: " + str(lives), font, screen, 720, 60)
+            drawText("Level: " + str(level), 36, screen, 60, 30)
+            drawText("Score: " + str(score), 36, screen, 720, 30)
+            drawText("Lives: " + str(lives), 36, screen, 720, 60)
             # refresh rate   
             fpsClock.tick(FPS)
             # camera()
@@ -300,12 +299,13 @@ def main():
            
 
 def game_over(a):
-    pygame.time.delay(30)
+    
     screen.fill(constants.BLACK)
-    drawText("GAME OVER", font, screen, (constants.SCREEN_WIDTH / 2), 300)
-    drawText("Your score " + str(a), font,screen,(constants.SCREEN_WIDTH /2),350)
-    drawText('Press a Space to play again.', font, screen, (constants.SCREEN_WIDTH / 2), 450)
+    drawText("GAME OVER", 40, screen, (constants.SCREEN_WIDTH / 2), 250)
+    drawText("Your score " + str(a), 40,screen,(constants.SCREEN_WIDTH /2),300)
+    drawText('Press a Space to play again.', 36, screen, (constants.SCREEN_WIDTH / 2), 400)
     pygame.display.update()
+    fpsClock.tick(20)
     gameover= True
     while gameover:
         for event in pygame.event.get():
@@ -315,6 +315,7 @@ def game_over(a):
             if event.type == pygame.KEYUP:
                 if event.key == K_SPACE:
                     gameover= False
-    
+ 
+
 start_screen()
 
