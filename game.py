@@ -36,7 +36,7 @@ goomba = Goomba(400)
 goomba2 = Goomba(440)
 brick1= platform.Platform(460,350)
 brick2= platform.Platform(490,350)
-
+brick3= platform.Platform(190,290)
 active_sprite_list.add(player, goomba, goomba2)
 level1cube_list = pygame.sprite.Group()
 level1coin_list = pygame.sprite.Group()
@@ -98,9 +98,8 @@ def create_level1():
 def create_level2():
     block_list = pygame.sprite.Group()
     #list of platform
-    blocks = [[30,370],
-              [200,465],
-              [230,290],
+    blocks = [[20,370],
+              [210,465],
               [370,200],
               [720,290]]
      
@@ -109,6 +108,7 @@ def create_level2():
         block=platform.Platform(item[0],item[1])
         block_list.add(block)
     block_list.add(brick2)
+    block_list.add(brick3)
     
     #list of coins
     coins = [[420, 50],[215, 420],[95,240],[110,240],[255,220],[350,100],[530,280],[680,220] ]
@@ -126,7 +126,7 @@ def create_level2():
         cactus= Cactus(item[0],item[1])
         level2cactus_list.add(cactus)
 
-    cube3= Cube(200, 140)
+    cube3= Cube(200, 120)
     cube4= Cube(420, 50)
     level2cube_list.add(cube3)
     level2cube_list.add(cube4)
@@ -253,7 +253,8 @@ def main():
             goomba2.move()
             brick1.move_x(590)
             brick2.move_x(580)
-            
+            brick3.move_x(280)
+
             player.update(block_list)
             if 740 > player.rect.x > 730 and 290 > player.rect.y > 205:
                 if level == 1:
@@ -266,6 +267,10 @@ def main():
                     player.rect.y = 500
             
                 elif level == 2:
+                    screen.fill(constants.BLACK)
+                    drawText("YOU WIN!!!", 44, screen, (constants.SCREEN_WIDTH / 2), 300)  
+                    pygame.display.update() 
+                    pygame.time.delay(40)
                     break
 
             player.calc_grav() 
@@ -285,21 +290,22 @@ def main():
             fpsClock.tick(FPS)
             # camera()
             # # update the screen with what we've drawn. 
-            pygame.display.flip()
-            # pygame.display.update()
-        
+            # pygame.display.flip()
             if lives <= 0:
                 gameover= True
                 gameloop= False
             if gameover:
                 game_over(score)
                 
+            pygame.display.update()
+        
+              
         pygame.mixer.music.stop()   
         terminate()   
            
 
 def game_over(a):
-    
+    pygame.mixer.music.stop()
     screen.fill(constants.BLACK)
     drawText("GAME OVER", 40, screen, (constants.SCREEN_WIDTH / 2), 250)
     drawText("Your score " + str(a), 40,screen,(constants.SCREEN_WIDTH /2),300)
@@ -315,7 +321,6 @@ def game_over(a):
             if event.type == pygame.KEYUP:
                 if event.key == K_SPACE:
                     gameover= False
- 
 
 start_screen()
 
