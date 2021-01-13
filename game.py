@@ -287,13 +287,13 @@ def main():
             if lives <= 0:
                 gameover= True
                 gameloop= False
-                game_over()
+                game_over(score)
                 
         pygame.mixer.music.stop()   
         terminate()   
            
 
-def game_over():
+def game_over(a):
     
     pygame.time.delay(30)
     
