@@ -295,9 +295,9 @@ def main():
 
 def game_over(a):
     
-    pygame.time.delay(30)
+        pygame.time.delay(30)
     
-    while True:
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -305,7 +305,6 @@ def game_over(a):
                 if event.type == pygame.KEYUP:
                     if event.key == K_SPACE:
                         return
-
 
 
                 
